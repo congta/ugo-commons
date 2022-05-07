@@ -1,4 +1,4 @@
-package main
+package ugo_commons
 
 import (
 	"congta.com/ugo-commons/commons-codec/usecrets"
