@@ -1,7 +1,6 @@
-package ugo_commons
+package usecrets
 
 import (
-	"congta.com/ugo-commons/commons-codec/usecrets"
 	"congta.com/ugo-commons/commons-io/ufiles"
 	"congta.com/ugo-commons/commons-lang/unumbers"
 	"congta.com/ugo-commons/commons-u/ucommons"
@@ -45,7 +44,7 @@ func handleKeyBox(args []string) error {
 		num := unumbers.ToInt(argsMap["-n"], 16)
 		fmt.Printf("make key box secret file, sid=%s, num=%d\n", sid, num)
 
-		fileName := usecrets.GetKeyBoxFileName(sid)
+		fileName := GetKeyBoxFileName(sid)
 		if ok, _ := ufiles.Exists(fileName); ok {
 			return fmt.Errorf("file is already exist %s", fileName)
 		}
@@ -60,7 +59,7 @@ func handleKeyBox(args []string) error {
 				return err
 			}
 
-			holder := &usecrets.KeyHolder{
+			holder := &KeyHolder{
 				Key: key,
 				Iv:  iv,
 				Id:  i + 1,
