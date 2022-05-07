@@ -1,11 +1,11 @@
 package usecrets
 
 import (
-	"congta.com/ugo-commons/commons"
 	"congta.com/ugo-commons/commons-codec/ucodings"
 	"congta.com/ugo-commons/commons-io/ufiles"
-	"congta.com/ugo-commons/commons-lang/uints"
+	"congta.com/ugo-commons/commons-lang/unumbers"
 	"congta.com/ugo-commons/commons-logging/ulogs"
+	"congta.com/ugo-commons/commons-u/ucommons"
 	"fmt"
 	"strings"
 )
@@ -17,12 +17,7 @@ type KeyBoxByFile struct {
 }
 
 func NewKeyBoxByFile(sid string) *KeyBoxByFile {
-	var fileName string
-	if commons.IsWindows() {
-		fileName = fmt.Sprintf("~/.congta/key/%s.secx", sid)
-	} else {
-		fileName = fmt.Sprintf("/etc/conf/congta/key/%s.secx", sid)
-	}
+	fileName := GetKeyBoxFileName(sid)
 	lines, err := ufiles.ReadLines(fileName)
 	if err != nil {
 		ulogs.Panic("key center secret not ready for %s", sid)
@@ -37,15 +32,15 @@ func NewKeyBoxByFile(sid string) *KeyBoxByFile {
 		ki := strings.Split(keyStr, "~")
 		holder := &KeyHolder{}
 		if len(ki) > 2 {
-			holder.id = uints.ParseIntWildly(ki[2])
+			holder.Id = unumbers.ParseIntWildly(ki[2])
 		}
-		holder.key = ucodings.DecodeBase64StringWildly(ki[0])
-		holder.iv = ucodings.DecodeBase64StringWildly(ki[1])
-		if _, ok := holders[holder.id]; ok {
-			ulogs.Warn("duplicate secret id: %d, use the first one", holder.id)
+		holder.Key = ucodings.DecodeBase64StringWildly(ki[0])
+		holder.Iv = ucodings.DecodeBase64StringWildly(ki[1])
+		if _, ok := holders[holder.Id]; ok {
+			ulogs.Warn("duplicate secret id: %d, use the first one", holder.Id)
 			continue
 		}
-		holders[holder.id] = *holder
+		holders[holder.Id] = *holder
 		holderArray = append(holderArray, *holder)
 	}
 	box := &KeyBoxByFile{
@@ -58,22 +53,32 @@ func NewKeyBoxByFile(sid string) *KeyBoxByFile {
 	return box
 }
 
-func (t *KeyBoxByFile) encrypt(data []byte) (res []byte, err error) {
+func GetKeyBoxFileName(sid string) string {
+	var fileName string
+	if ucommons.IsWindows() {
+		fileName = fmt.Sprintf(ucommons.Home()+"/.congta/key/%s.keb", sid)
+	} else {
+		fileName = fmt.Sprintf("/etc/conf/congta/key/%s.keb", sid)
+	}
+	return fileName
+}
+
+func (t *KeyBoxByFile) Encrypt(data []byte) (res []byte, err error) {
 	holder := t.holderArr[t.arrCursor]
 	t.arrCursor = (t.arrCursor + 1) % len(t.holderArr)
 
 	return encrypt(data, holder)
 
 }
-func (t *KeyBoxByFile) encryptStr(data string) (res string, err error) {
-	secBytes, err := t.encrypt([]byte(data))
+func (t *KeyBoxByFile) EncryptStr(data string) (res string, err error) {
+	secBytes, err := t.Encrypt([]byte(data))
 	if err != nil {
 		return "", err
 	}
 	return ucodings.EncodeBase64URLSafeString(secBytes), nil
 }
 
-func (t *KeyBoxByFile) decrypt(data []byte) (res []byte, err error) {
+func (t *KeyBoxByFile) Decrypt(data []byte) (res []byte, err error) {
 	defer func() {
 		if err0 := recover(); err0 != nil {
 			err = fmt.Errorf("%v", err0)
@@ -82,12 +87,12 @@ func (t *KeyBoxByFile) decrypt(data []byte) (res []byte, err error) {
 	return decrypt(data, t.holderMap)
 }
 
-func (t *KeyBoxByFile) decryptStr(data string) (res string, err error) {
+func (t *KeyBoxByFile) DecryptStr(data string) (res string, err error) {
 	secBytes, err := ucodings.DecodeBase64String(data)
 	if err != nil {
 		return "", err
 	}
-	rawBytes, err := t.decrypt(secBytes)
+	rawBytes, err := t.Decrypt(secBytes)
 	if err != nil {
 		return "", err
 	}

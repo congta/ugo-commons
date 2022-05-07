@@ -22,7 +22,7 @@ var (
 	maxHolderId      = 127
 )
 
-type KeePas interface {
+type KeyBox interface {
 	encrypt(data []byte) (res []byte, err error)
 	encryptStr(data string) (res string, err error)
 	decrypt(data []byte) (res []byte, err error)
@@ -30,24 +30,24 @@ type KeePas interface {
 }
 
 type KeyHolder struct {
-	id  int
-	key []byte
-	iv  []byte
+	Id  int
+	Key []byte
+	Iv  []byte
 }
 
-func (h KeyHolder) toString() string {
-	return fmt.Sprintf("%s~%s~%d", ucodings.EncodeBase64String(h.key), ucodings.EncodeBase64String(h.iv), h.id)
+func (h KeyHolder) ToString() string {
+	return fmt.Sprintf("%s~%s~%d", ucodings.EncodeBase64String(h.Key), ucodings.EncodeBase64String(h.Iv), h.Id)
 }
 
 func encrypt(data []byte, holder KeyHolder) (res []byte, err error) {
-	if holder.id < minHolderId || holder.id > maxHolderId {
+	if holder.Id < minHolderId || holder.Id > maxHolderId {
 		return nil, errors.New("invalid holder id for current version")
 	}
 
 	// add outer header (unencrypted)
 	finalBytes := make([]byte, 0)
 	finalBytes = append(finalBytes, version)
-	finalBytes = append(finalBytes, byte(holder.id))
+	finalBytes = append(finalBytes, byte(holder.Id))
 
 	// add inner header (encrypted)
 	header := make(map[string]interface{})
@@ -56,7 +56,7 @@ func encrypt(data []byte, holder KeyHolder) (res []byte, err error) {
 	headerLen := len(headerBytes)
 
 	iv := getIv(holder, headerBytes)
-	msgBytes, err := AesCBCEncrypt(data, holder.key, iv)
+	msgBytes, err := AesCBCEncrypt(data, holder.Key, iv)
 	if err != nil {
 		return nil, err
 	}
@@ -96,14 +96,14 @@ func decrypt(data []byte, holderMap map[int]KeyHolder) (dst []byte, err error) {
 	}
 
 	iv := getIv(holder, data[4:msgStart])
-	if dst, err = AesCTRDecrypt(data[msgStart:], holder.key, iv); err != nil {
+	if dst, err = AesCBCDecrypt(data[msgStart:], holder.Key, iv); err != nil {
 		return nil, err
 	}
 	return dst, nil
 }
 
 func getIv(holder KeyHolder, header []byte) []byte {
-	iv := holder.iv
+	iv := holder.Iv
 	if iv == nil || len(iv) == 0 {
 		iv = udigests.Md5(header)
 	}

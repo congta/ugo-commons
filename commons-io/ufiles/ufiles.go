@@ -46,6 +46,39 @@ func ReadLinesTry(fileName string) []string {
 	return lines
 }
 
+func WriteLines(fileName string, lines []string) error {
+	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE, 0755)
+	if err != nil {
+		return err
+	}
+	defer CloseQuietly(file)
+
+	writer := bufio.NewWriter(file)
+	for _, line := range lines {
+		if _, err := writer.WriteString(line + "\n"); err != nil {
+			return err
+		}
+	}
+	// file.Close don't trigger flush
+	return writer.Flush()
+}
+
+// Exists return (false, err) means it's not sure due to some errors
+func Exists(fileName string) (bool, error) {
+	_, err := os.Stat(fileName)
+	if err == nil {
+		return true, nil
+	}
+	// error may be non-exist or others
+	if os.IsExist(err) {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
+}
+
 func CloseQuietly(file *os.File) {
 	if err := file.Close(); err != nil {
 		ulogs.Warn("close file error, %v", err)
