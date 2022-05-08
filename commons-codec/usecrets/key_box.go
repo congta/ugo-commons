@@ -1,13 +1,14 @@
 package usecrets
 
 import (
-	"congta.com/ugo-commons/commons-codec/ucodings"
-	"congta.com/ugo-commons/commons-codec/udigests"
-	"congta.com/ugo-commons/commons-lang/ubytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
+
+	"github.com/congta/ugo-commons/commons-codec/ucodings"
+	"github.com/congta/ugo-commons/commons-codec/udigests"
+	"github.com/congta/ugo-commons/commons-lang/ubytes"
 )
 
 /**

@@ -2,7 +2,6 @@ package ucommons
 
 import (
 	"bytes"
-	"congta.com/ugo-commons/commons-logging/ulogs"
 	"errors"
 	"os"
 	"os/exec"
@@ -10,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/congta/ugo-commons/commons-logging/ulogs"
 )
 
 func IsWindows() bool {

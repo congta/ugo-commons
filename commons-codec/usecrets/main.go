@@ -1,12 +1,13 @@
 package usecrets
 
 import (
-	"congta.com/ugo-commons/commons-io/ufiles"
-	"congta.com/ugo-commons/commons-lang/unumbers"
-	"congta.com/ugo-commons/commons-u/ucommons"
 	"crypto/rand"
 	"fmt"
 	"os"
+
+	"github.com/congta/ugo-commons/commons-io/ufiles"
+	"github.com/congta/ugo-commons/commons-lang/unumbers"
+	"github.com/congta/ugo-commons/commons-u/ucommons"
 )
 
 func main() {

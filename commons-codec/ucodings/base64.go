@@ -1,9 +1,10 @@
 package ucodings
 
 import (
-	"congta.com/ugo-commons/commons-logging/ulogs"
 	"encoding/base64"
 	"strings"
+
+	"github.com/congta/ugo-commons/commons-logging/ulogs"
 )
 
 var (
@@ -32,7 +33,7 @@ func EncodeBase64URLSafeString(src []byte) string {
 }
 
 func DecodeBase64(src []byte) ([]byte, error) {
-	
+
 	dst := make([]byte, stdEncoding.DecodedLen(len(src)))
 	n, err := stdEncoding.Decode(dst, src)
 	return dst[:n], err

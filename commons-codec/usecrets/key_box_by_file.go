@@ -1,13 +1,14 @@
 package usecrets
 
 import (
-	"congta.com/ugo-commons/commons-codec/ucodings"
-	"congta.com/ugo-commons/commons-io/ufiles"
-	"congta.com/ugo-commons/commons-lang/unumbers"
-	"congta.com/ugo-commons/commons-logging/ulogs"
-	"congta.com/ugo-commons/commons-u/ucommons"
 	"fmt"
 	"strings"
+
+	"github.com/congta/ugo-commons/commons-codec/ucodings"
+	"github.com/congta/ugo-commons/commons-io/ufiles"
+	"github.com/congta/ugo-commons/commons-lang/unumbers"
+	"github.com/congta/ugo-commons/commons-logging/ulogs"
+	"github.com/congta/ugo-commons/commons-u/ucommons"
 )
 
 type KeyBoxByFile struct {

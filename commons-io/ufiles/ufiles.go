@@ -2,8 +2,9 @@ package ufiles
 
 import (
 	"bufio"
-	"congta.com/ugo-commons/commons-logging/ulogs"
 	"os"
+
+	"github.com/congta/ugo-commons/commons-logging/ulogs"
 )
 
 func ReadLinesTry0(file *os.File) []string {
