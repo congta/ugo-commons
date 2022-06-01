@@ -26,10 +26,10 @@ var (
 )
 
 type KeyBus interface {
-	encrypt(data []byte) (res []byte, err error)
-	encryptStr(data string) (res string, err error)
-	decrypt(data []byte) (res []byte, err error)
-	decryptStr(data string) (res string, err error)
+	Encrypt(data []byte) (res []byte, err error)
+	EncryptStr(data string) (res string, err error)
+	Decrypt(data []byte) (res []byte, err error)
+	DecryptStr(data string) (res string, err error)
 }
 
 type KeyHolder struct {
