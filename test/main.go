@@ -1,4 +1,4 @@
-package usecrets
+package test
 
 import (
 	"crypto/rand"
@@ -8,12 +8,13 @@ import (
 	"github.com/congta/ugo-commons/commons-io/ufiles"
 	"github.com/congta/ugo-commons/commons-lang/unumbers"
 	"github.com/congta/ugo-commons/commons-u/ucommons"
+	"github.com/congta/ugo-commons/keybus"
 )
 
 func main() {
 	args := os.Args
 
-	if len(args) == 0 {
+	if len(args) <= 1 {
 		fmt.Println("Please enter arguments")
 		return
 	}
@@ -22,8 +23,9 @@ func main() {
 
 	var err error
 	switch args[1] {
-	case "key-box":
-		err = handleKeyBox(args[2:])
+	case "key-bus":
+		// key-bus --create -other 1 3 --hello --world=2 --w2 2 --sid=qunmus
+		err = handleKeyBus(args[2:])
 	default:
 		err = fmt.Errorf("unknown command %s", args[1])
 	}
@@ -33,7 +35,7 @@ func main() {
 	}
 }
 
-func handleKeyBox(args []string) error {
+func handleKeyBus(args []string) error {
 	if args[0] == "--create" {
 		// e.g. --create --sid=xxx -n 16
 		argsMap := ucommons.GetArgsMap(args)
@@ -45,7 +47,7 @@ func handleKeyBox(args []string) error {
 		num := unumbers.ToInt(argsMap["-n"], 16)
 		fmt.Printf("make key box secret file, sid=%s, num=%d\n", sid, num)
 
-		fileName := GetKeyBoxFileName(sid)
+		fileName := keybus.GetKeyBusFileName(sid)
 		if ok, _ := ufiles.Exists(fileName); ok {
 			return fmt.Errorf("file is already exist %s", fileName)
 		}
@@ -60,7 +62,7 @@ func handleKeyBox(args []string) error {
 				return err
 			}
 
-			holder := &KeyHolder{
+			holder := &keybus.KeyHolder{
 				Key: key,
 				Iv:  iv,
 				Id:  i + 1,

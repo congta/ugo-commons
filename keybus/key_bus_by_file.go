@@ -1,4 +1,4 @@
-package usecrets
+package keybus
 
 import (
 	"fmt"
@@ -11,14 +11,14 @@ import (
 	"github.com/congta/ugo-commons/commons-u/ucommons"
 )
 
-type KeyBoxByFile struct {
+type KeyBusByFile struct {
 	holderMap map[int]KeyHolder
 	holderArr []KeyHolder
 	arrCursor int
 }
 
-func NewKeyBoxByFile(sid string) *KeyBoxByFile {
-	fileName := GetKeyBoxFileName(sid)
+func NewKeyBusByFile(sid string) *KeyBusByFile {
+	fileName := GetKeyBusFileName(sid)
 	lines, err := ufiles.ReadLines(fileName)
 	if err != nil {
 		ulogs.Panic("key center secret not ready for %s", sid)
@@ -44,17 +44,17 @@ func NewKeyBoxByFile(sid string) *KeyBoxByFile {
 		holders[holder.Id] = *holder
 		holderArray = append(holderArray, *holder)
 	}
-	box := &KeyBoxByFile{
+	box := &KeyBusByFile{
 		holderMap: holders,
 		holderArr: holderArray,
 	}
 	if len(holderArray) < 1 {
-		ulogs.Panic("no key found for KeyBox %s", fileName)
+		ulogs.Panic("no key found for KeyBus %s", fileName)
 	}
 	return box
 }
 
-func GetKeyBoxFileName(sid string) string {
+func GetKeyBusFileName(sid string) string {
 	var fileName string
 	if ucommons.IsWindows() {
 		fileName = fmt.Sprintf(ucommons.Home()+"/.congta/key/%s.keb", sid)
@@ -64,14 +64,14 @@ func GetKeyBoxFileName(sid string) string {
 	return fileName
 }
 
-func (t *KeyBoxByFile) Encrypt(data []byte) (res []byte, err error) {
+func (t *KeyBusByFile) Encrypt(data []byte) (res []byte, err error) {
 	holder := t.holderArr[t.arrCursor]
 	t.arrCursor = (t.arrCursor + 1) % len(t.holderArr)
 
 	return encrypt(data, holder)
 
 }
-func (t *KeyBoxByFile) EncryptStr(data string) (res string, err error) {
+func (t *KeyBusByFile) EncryptStr(data string) (res string, err error) {
 	secBytes, err := t.Encrypt([]byte(data))
 	if err != nil {
 		return "", err
@@ -79,7 +79,7 @@ func (t *KeyBoxByFile) EncryptStr(data string) (res string, err error) {
 	return ucodings.EncodeBase64URLSafeString(secBytes), nil
 }
 
-func (t *KeyBoxByFile) Decrypt(data []byte) (res []byte, err error) {
+func (t *KeyBusByFile) Decrypt(data []byte) (res []byte, err error) {
 	defer func() {
 		if err0 := recover(); err0 != nil {
 			err = fmt.Errorf("%v", err0)
@@ -88,7 +88,7 @@ func (t *KeyBoxByFile) Decrypt(data []byte) (res []byte, err error) {
 	return decrypt(data, t.holderMap)
 }
 
-func (t *KeyBoxByFile) DecryptStr(data string) (res string, err error) {
+func (t *KeyBusByFile) DecryptStr(data string) (res string, err error) {
 	secBytes, err := ucodings.DecodeBase64String(data)
 	if err != nil {
 		return "", err
