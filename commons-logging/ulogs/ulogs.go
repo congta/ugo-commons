@@ -1,6 +1,7 @@
 package ulogs
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -118,4 +119,49 @@ func Panic(format string, v ...interface{}) {
 	s := fmt.Sprintf(format, v...)
 	_ = defaultLogger.Info.Output(2, s)
 	panic(s)
+}
+
+func CtxDebug(ctx context.Context, format string, v ...interface{}) {
+	if defaultLogger.level > LevelDebug {
+		return
+	}
+	_ = defaultLogger.Debug.Output(2, getLogIDPrefix(ctx)+fmt.Sprintf(format, v...))
+}
+
+func CtxInfo(ctx context.Context, format string, v ...interface{}) {
+	if defaultLogger.level > LevelInfo {
+		return
+	}
+	_ = defaultLogger.Info.Output(2, getLogIDPrefix(ctx)+fmt.Sprintf(format, v...))
+}
+
+func CtxWarn(ctx context.Context, format string, v ...interface{}) {
+	if defaultLogger.level > LevelWarn {
+		return
+	}
+	_ = defaultLogger.Warn.Output(2, getLogIDPrefix(ctx)+fmt.Sprintf(format, v...))
+}
+
+func CtxError(ctx context.Context, format string, v ...interface{}) {
+	if defaultLogger.level > LevelError {
+		return
+	}
+	_ = defaultLogger.Error.Output(2, getLogIDPrefix(ctx)+fmt.Sprintf(format, v...))
+}
+
+func CtxPanic(ctx context.Context, format string, v ...interface{}) {
+	if defaultLogger.level > LevelPanic {
+		return
+	}
+	s := getLogIDPrefix(ctx) + fmt.Sprintf(format, v...)
+	_ = defaultLogger.Info.Output(2, s)
+	panic(s)
+}
+
+func getLogIDPrefix(ctx context.Context) string {
+	logID := ctx.Value("_LogID")
+	if logID == nil {
+		return ""
+	}
+	return fmt.Sprintf("LogID=%v, ", logID)
 }
