@@ -64,6 +64,22 @@ func WriteLines(fileName string, lines []string) error {
 	return writer.Flush()
 }
 
+func IsDir(fileName string) (bool, error) {
+	s, err := os.Stat(fileName)
+	if err != nil {
+		return false, err
+	}
+	return s.IsDir(), nil
+}
+
+func IsNormalFile(fileName string) (bool, error) {
+	s, err := os.Stat(fileName)
+	if err != nil {
+		return false, err
+	}
+	return !s.IsDir(), nil
+}
+
 // Exists return (false, err) means it's not sure due to some errors
 func Exists(fileName string) (bool, error) {
 	_, err := os.Stat(fileName)
