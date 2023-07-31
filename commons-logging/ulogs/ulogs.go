@@ -24,6 +24,7 @@ type LoggerOptions struct {
 	Path    string
 	Rolling bool
 	Level   LogLevel
+	Flag    *int
 }
 
 type RollingLogger struct {
@@ -74,13 +75,18 @@ func SetLogger(opts LoggerOptions) {
 		return
 	}
 
-	defaultLogger.Trace = log.New(f, "TRACE: ", flag)
-	defaultLogger.Debug = log.New(f, "DEBUG: ", flag)
-	defaultLogger.Info = log.New(f, "INFO: ", flag)
-	defaultLogger.Notice = log.New(f, "NOTICE: ", flag)
-	defaultLogger.Warn = log.New(f, "WARN: ", flag)
-	defaultLogger.Error = log.New(f, "ERROR: ", flag)
-	defaultLogger.Panic = log.New(f, "PANIC: ", flag)
+	localFlag := flag
+	if opts.Flag != nil {
+		localFlag = *opts.Flag
+	}
+
+	defaultLogger.Trace = log.New(f, "TRACE: ", localFlag)
+	defaultLogger.Debug = log.New(f, "DEBUG: ", localFlag)
+	defaultLogger.Info = log.New(f, "INFO: ", localFlag)
+	defaultLogger.Notice = log.New(f, "NOTICE: ", localFlag)
+	defaultLogger.Warn = log.New(f, "WARN: ", localFlag)
+	defaultLogger.Error = log.New(f, "ERROR: ", localFlag)
+	defaultLogger.Panic = log.New(f, "PANIC: ", localFlag)
 	defaultLogger.file = f
 	defaultLogger.level = opts.Level
 }
