@@ -11,12 +11,13 @@ import (
 type LogLevel int8
 
 var (
-	LevelDebug  LogLevel = 1
-	LevelInfo   LogLevel = 2
-	LevelNotice LogLevel = 3
-	LevelWarn   LogLevel = 4
-	LevelError  LogLevel = 5
-	LevelPanic  LogLevel = 6
+	LevelTrace  LogLevel = 1
+	LevelDebug  LogLevel = 2
+	LevelInfo   LogLevel = 3
+	LevelNotice LogLevel = 4
+	LevelWarn   LogLevel = 5
+	LevelError  LogLevel = 6
+	LevelPanic  LogLevel = 7
 )
 
 type LoggerOptions struct {
@@ -29,11 +30,13 @@ type RollingLogger struct {
 	file  *os.File
 	level LogLevel
 
-	Info  *log.Logger
-	Debug *log.Logger
-	Warn  *log.Logger
-	Error *log.Logger
-	Panic *log.Logger
+	Trace  *log.Logger
+	Debug  *log.Logger
+	Info   *log.Logger
+	Notice *log.Logger
+	Warn   *log.Logger
+	Error  *log.Logger
+	Panic  *log.Logger
 }
 
 var (
@@ -42,8 +45,10 @@ var (
 )
 
 func init() {
+	defaultLogger.Trace = log.New(os.Stdout, "TRACE: ", flag)
 	defaultLogger.Debug = log.New(os.Stdout, "DEBUG: ", flag)
 	defaultLogger.Info = log.New(os.Stdout, "INFO: ", flag)
+	defaultLogger.Notice = log.New(os.Stdout, "NOTICE: ", flag)
 	defaultLogger.Warn = log.New(os.Stdout, "WARN: ", flag)
 	defaultLogger.Error = log.New(os.Stderr, "ERROR: ", flag)
 	defaultLogger.Panic = log.New(os.Stderr, "PANIC: ", flag)
@@ -69,8 +74,10 @@ func SetLogger(opts LoggerOptions) {
 		return
 	}
 
+	defaultLogger.Trace = log.New(f, "TRACE: ", flag)
 	defaultLogger.Debug = log.New(f, "DEBUG: ", flag)
 	defaultLogger.Info = log.New(f, "INFO: ", flag)
+	defaultLogger.Notice = log.New(f, "NOTICE: ", flag)
 	defaultLogger.Warn = log.New(f, "WARN: ", flag)
 	defaultLogger.Error = log.New(f, "ERROR: ", flag)
 	defaultLogger.Panic = log.New(f, "PANIC: ", flag)
@@ -83,6 +90,13 @@ func Close() {
 		_ = defaultLogger.file.Close()
 		defaultLogger.file = nil
 	}
+}
+
+func Trace(format string, v ...interface{}) {
+	if defaultLogger.level > LevelTrace {
+		return
+	}
+	_ = defaultLogger.Debug.Output(2, fmt.Sprintf(format, v...))
 }
 
 func Debug(format string, v ...interface{}) {
@@ -127,6 +141,13 @@ func Panic(format string, v ...interface{}) {
 	s := fmt.Sprintf(format, v...)
 	_ = defaultLogger.Info.Output(2, s)
 	panic(s)
+}
+
+func CtxTrace(ctx context.Context, format string, v ...interface{}) {
+	if defaultLogger.level > LevelTrace {
+		return
+	}
+	_ = defaultLogger.Debug.Output(2, getLogIDPrefix(ctx)+fmt.Sprintf(format, v...))
 }
 
 func CtxDebug(ctx context.Context, format string, v ...interface{}) {
