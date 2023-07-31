@@ -11,11 +11,12 @@ import (
 type LogLevel int8
 
 var (
-	LevelDebug LogLevel = 1
-	LevelInfo  LogLevel = 2
-	LevelWarn  LogLevel = 3
-	LevelError LogLevel = 4
-	LevelPanic LogLevel = 5
+	LevelDebug  LogLevel = 1
+	LevelInfo   LogLevel = 2
+	LevelNotice LogLevel = 3
+	LevelWarn   LogLevel = 4
+	LevelError  LogLevel = 5
+	LevelPanic  LogLevel = 6
 )
 
 type LoggerOptions struct {
@@ -98,6 +99,13 @@ func Info(format string, v ...interface{}) {
 	_ = defaultLogger.Info.Output(2, fmt.Sprintf(format, v...))
 }
 
+func Notice(format string, v ...interface{}) {
+	if defaultLogger.level > LevelNotice {
+		return
+	}
+	_ = defaultLogger.Info.Output(2, fmt.Sprintf(format, v...))
+}
+
 func Warn(format string, v ...interface{}) {
 	if defaultLogger.level > LevelWarn {
 		return
@@ -130,6 +138,13 @@ func CtxDebug(ctx context.Context, format string, v ...interface{}) {
 
 func CtxInfo(ctx context.Context, format string, v ...interface{}) {
 	if defaultLogger.level > LevelInfo {
+		return
+	}
+	_ = defaultLogger.Info.Output(2, getLogIDPrefix(ctx)+fmt.Sprintf(format, v...))
+}
+
+func CtxNotice(ctx context.Context, format string, v ...interface{}) {
+	if defaultLogger.level > LevelNotice {
 		return
 	}
 	_ = defaultLogger.Info.Output(2, getLogIDPrefix(ctx)+fmt.Sprintf(format, v...))
