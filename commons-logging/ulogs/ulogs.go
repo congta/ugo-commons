@@ -17,7 +17,8 @@ var (
 	LevelNotice LogLevel = 4
 	LevelWarn   LogLevel = 5
 	LevelError  LogLevel = 6
-	LevelPanic  LogLevel = 7
+	LevelFatal  LogLevel = 7
+	LevelPanic  LogLevel = 8
 )
 
 type LoggerOptions struct {
@@ -37,6 +38,7 @@ type RollingLogger struct {
 	Notice *log.Logger
 	Warn   *log.Logger
 	Error  *log.Logger
+	Fatal  *log.Logger
 	Panic  *log.Logger
 }
 
@@ -52,6 +54,7 @@ func init() {
 	defaultLogger.Notice = log.New(os.Stdout, "NOTICE: ", flag)
 	defaultLogger.Warn = log.New(os.Stdout, "WARN: ", flag)
 	defaultLogger.Error = log.New(os.Stderr, "ERROR: ", flag)
+	defaultLogger.Fatal = log.New(os.Stderr, "FATAL: ", flag)
 	defaultLogger.Panic = log.New(os.Stderr, "PANIC: ", flag)
 	//intervalNs := float64(24 * time.Hour)
 	//nowUnixNano := time.Now().UnixNano()
@@ -86,6 +89,7 @@ func SetLogger(opts LoggerOptions) {
 	defaultLogger.Notice = log.New(f, "NOTICE: ", localFlag)
 	defaultLogger.Warn = log.New(f, "WARN: ", localFlag)
 	defaultLogger.Error = log.New(f, "ERROR: ", localFlag)
+	defaultLogger.Fatal = log.New(f, "FATAL: ", localFlag)
 	defaultLogger.Panic = log.New(f, "PANIC: ", localFlag)
 	defaultLogger.file = f
 	defaultLogger.level = opts.Level
@@ -140,6 +144,13 @@ func Error(format string, v ...interface{}) {
 	_ = defaultLogger.Error.Output(2, fmt.Sprintf(format, v...))
 }
 
+func Fatal(format string, v ...interface{}) {
+	if defaultLogger.level > LevelFatal {
+		return
+	}
+	_ = defaultLogger.Error.Output(2, fmt.Sprintf(format, v...))
+}
+
 func Panic(format string, v ...interface{}) {
 	if defaultLogger.level > LevelPanic {
 		return
@@ -186,6 +197,13 @@ func CtxWarn(ctx context.Context, format string, v ...interface{}) {
 
 func CtxError(ctx context.Context, format string, v ...interface{}) {
 	if defaultLogger.level > LevelError {
+		return
+	}
+	_ = defaultLogger.Error.Output(2, getLogIDPrefix(ctx)+fmt.Sprintf(format, v...))
+}
+
+func CtxFatal(ctx context.Context, format string, v ...interface{}) {
+	if defaultLogger.level > LevelFatal {
 		return
 	}
 	_ = defaultLogger.Error.Output(2, getLogIDPrefix(ctx)+fmt.Sprintf(format, v...))

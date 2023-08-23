@@ -21,7 +21,7 @@ func NewKeyBusByFile(sid string) *KeyBusByFile {
 	fileName := GetKeyBusFileName(sid)
 	lines, err := ufiles.ReadLines(fileName)
 	if err != nil {
-		ulogs.Panic("key center secret not ready for %s", sid)
+		ulogs.Panic("key center secret not ready for %s, err: %+v", sid, err)
 	}
 
 	holders := make(map[int]KeyHolder)
