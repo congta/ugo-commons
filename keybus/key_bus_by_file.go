@@ -15,10 +15,22 @@ type KeyBusByFile struct {
 	holderMap map[int]KeyHolder
 	holderArr []KeyHolder
 	arrCursor int
+	legacy    bool
+}
+
+func NewKeyBusByLegacyFile(sid string) *KeyBusByFile {
+	fileName := GetKeyBusLegacyFileName(sid)
+	box := loadFromFile(sid, fileName)
+	box.legacy = true
+	return box
 }
 
 func NewKeyBusByFile(sid string) *KeyBusByFile {
 	fileName := GetKeyBusFileName(sid)
+	return loadFromFile(sid, fileName)
+}
+
+func loadFromFile(sid string, fileName string) *KeyBusByFile {
 	lines, err := ufiles.ReadLines(fileName)
 	if err != nil {
 		ulogs.Panic("key center secret not ready for %s, err: %+v", sid, err)
@@ -64,12 +76,25 @@ func GetKeyBusFileName(sid string) string {
 	return fileName
 }
 
+func GetKeyBusLegacyFileName(sid string) string {
+	var fileName string
+	if ucommons.IsWindows() {
+		fileName = fmt.Sprintf(ucommons.Home()+"/.congta/key/%s.sec", sid)
+	} else {
+		fileName = fmt.Sprintf("/etc/conf/congta/key/%s.sec", sid)
+	}
+	return fileName
+}
+
 func (t *KeyBusByFile) Encrypt(data []byte) (res []byte, err error) {
 	holder := t.holderArr[t.arrCursor]
 	t.arrCursor = (t.arrCursor + 1) % len(t.holderArr)
 
-	return encrypt(data, holder)
-
+	if t.legacy {
+		return encryptLegacy(data, holder)
+	} else {
+		return encrypt(data, holder)
+	}
 }
 func (t *KeyBusByFile) EncryptStr(data string) (res string, err error) {
 	secBytes, err := t.Encrypt([]byte(data))
@@ -85,7 +110,11 @@ func (t *KeyBusByFile) Decrypt(data []byte) (res []byte, err error) {
 			err = fmt.Errorf("%v", err0)
 		}
 	}()
-	return decrypt(data, t.holderMap)
+	if t.legacy {
+		return decryptLegacy(data, t.holderMap)
+	} else {
+		return decrypt(data, t.holderMap)
+	}
 }
 
 func (t *KeyBusByFile) DecryptStr(data string) (res string, err error) {

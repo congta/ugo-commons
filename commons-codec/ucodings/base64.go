@@ -33,7 +33,6 @@ func EncodeBase64URLSafeString(src []byte) string {
 }
 
 func DecodeBase64(src []byte) ([]byte, error) {
-
 	dst := make([]byte, stdEncoding.DecodedLen(len(src)))
 	n, err := stdEncoding.Decode(dst, src)
 	return dst[:n], err
@@ -41,9 +40,17 @@ func DecodeBase64(src []byte) ([]byte, error) {
 
 func DecodeBase64String(s string) ([]byte, error) {
 	if strings.ContainsAny(s, "+/") {
-		return stdEncoding.DecodeString(s)
+		if strings.HasSuffix(s, "=") {
+			return base64.StdEncoding.DecodeString(s)
+		} else {
+			return base64.RawStdEncoding.DecodeString(s)
+		}
 	}
-	return urlEncoding.DecodeString(s)
+	if strings.HasSuffix(s, "=") {
+		return base64.URLEncoding.DecodeString(s)
+	} else {
+		return base64.RawURLEncoding.DecodeString(s)
+	}
 }
 
 func DecodeBase64StringWildly(s string) []byte {

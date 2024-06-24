@@ -1,12 +1,15 @@
 package keybus
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 )
 
 func TestPipe(t *testing.T) {
-
+	s := ""
+	box := NewKeyBusByLegacyFile("maptime-prod")
+	fmt.Println(box.DecryptStr(s))
 }
 
 func TestInstall(t *testing.T) {
