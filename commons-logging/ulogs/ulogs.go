@@ -64,7 +64,7 @@ func init() {
 	//ticker := time.Tick(24 * time.Hour)
 }
 
-func SetLogger(opts LoggerOptions) {
+func SetLoggerV1(opts LoggerOptions) {
 	if opts.Path == "" {
 		defaultLogger.Warn.Printf("logger path is not valid: %s", opts.Path)
 		return
@@ -95,63 +95,63 @@ func SetLogger(opts LoggerOptions) {
 	defaultLogger.level = opts.Level
 }
 
-func Close() {
+func CloseV1() {
 	if defaultLogger.file != nil {
 		_ = defaultLogger.file.Close()
 		defaultLogger.file = nil
 	}
 }
 
-func Trace(format string, v ...interface{}) {
+func TraceV1(format string, v ...interface{}) {
 	if defaultLogger.level > LevelTrace {
 		return
 	}
 	_ = defaultLogger.Debug.Output(2, fmt.Sprintf(format, v...))
 }
 
-func Debug(format string, v ...interface{}) {
+func DebugV1(format string, v ...interface{}) {
 	if defaultLogger.level > LevelDebug {
 		return
 	}
 	_ = defaultLogger.Debug.Output(2, fmt.Sprintf(format, v...))
 }
 
-func Info(format string, v ...interface{}) {
+func InfoV1(format string, v ...interface{}) {
 	if defaultLogger.level > LevelInfo {
 		return
 	}
 	_ = defaultLogger.Info.Output(2, fmt.Sprintf(format, v...))
 }
 
-func Notice(format string, v ...interface{}) {
+func NoticeV1(format string, v ...interface{}) {
 	if defaultLogger.level > LevelNotice {
 		return
 	}
 	_ = defaultLogger.Info.Output(2, fmt.Sprintf(format, v...))
 }
 
-func Warn(format string, v ...interface{}) {
+func WarnV1(format string, v ...interface{}) {
 	if defaultLogger.level > LevelWarn {
 		return
 	}
 	_ = defaultLogger.Warn.Output(2, fmt.Sprintf(format, v...))
 }
 
-func Error(format string, v ...interface{}) {
+func ErrorV1(format string, v ...interface{}) {
 	if defaultLogger.level > LevelError {
 		return
 	}
 	_ = defaultLogger.Error.Output(2, fmt.Sprintf(format, v...))
 }
 
-func Fatal(format string, v ...interface{}) {
+func FatalV1(format string, v ...interface{}) {
 	if defaultLogger.level > LevelFatal {
 		return
 	}
 	_ = defaultLogger.Error.Output(2, fmt.Sprintf(format, v...))
 }
 
-func Panic(format string, v ...interface{}) {
+func PanicV1(format string, v ...interface{}) {
 	if defaultLogger.level > LevelPanic {
 		return
 	}
@@ -160,56 +160,56 @@ func Panic(format string, v ...interface{}) {
 	panic(s)
 }
 
-func CtxTrace(ctx context.Context, format string, v ...interface{}) {
+func CtxTraceV1(ctx context.Context, format string, v ...interface{}) {
 	if defaultLogger.level > LevelTrace {
 		return
 	}
 	_ = defaultLogger.Debug.Output(2, getLogIDPrefix(ctx)+fmt.Sprintf(format, v...))
 }
 
-func CtxDebug(ctx context.Context, format string, v ...interface{}) {
+func CtxDebugV1(ctx context.Context, format string, v ...interface{}) {
 	if defaultLogger.level > LevelDebug {
 		return
 	}
 	_ = defaultLogger.Debug.Output(2, getLogIDPrefix(ctx)+fmt.Sprintf(format, v...))
 }
 
-func CtxInfo(ctx context.Context, format string, v ...interface{}) {
+func CtxInfoV1(ctx context.Context, format string, v ...interface{}) {
 	if defaultLogger.level > LevelInfo {
 		return
 	}
 	_ = defaultLogger.Info.Output(2, getLogIDPrefix(ctx)+fmt.Sprintf(format, v...))
 }
 
-func CtxNotice(ctx context.Context, format string, v ...interface{}) {
+func CtxNoticeV1(ctx context.Context, format string, v ...interface{}) {
 	if defaultLogger.level > LevelNotice {
 		return
 	}
 	_ = defaultLogger.Info.Output(2, getLogIDPrefix(ctx)+fmt.Sprintf(format, v...))
 }
 
-func CtxWarn(ctx context.Context, format string, v ...interface{}) {
+func CtxWarnV1(ctx context.Context, format string, v ...interface{}) {
 	if defaultLogger.level > LevelWarn {
 		return
 	}
 	_ = defaultLogger.Warn.Output(2, getLogIDPrefix(ctx)+fmt.Sprintf(format, v...))
 }
 
-func CtxError(ctx context.Context, format string, v ...interface{}) {
+func CtxErrorV1(ctx context.Context, format string, v ...interface{}) {
 	if defaultLogger.level > LevelError {
 		return
 	}
 	_ = defaultLogger.Error.Output(2, getLogIDPrefix(ctx)+fmt.Sprintf(format, v...))
 }
 
-func CtxFatal(ctx context.Context, format string, v ...interface{}) {
+func CtxFatalV1(ctx context.Context, format string, v ...interface{}) {
 	if defaultLogger.level > LevelFatal {
 		return
 	}
 	_ = defaultLogger.Error.Output(2, getLogIDPrefix(ctx)+fmt.Sprintf(format, v...))
 }
 
-func CtxPanic(ctx context.Context, format string, v ...interface{}) {
+func CtxPanicV1(ctx context.Context, format string, v ...interface{}) {
 	if defaultLogger.level > LevelPanic {
 		return
 	}

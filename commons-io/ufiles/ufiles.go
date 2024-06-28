@@ -3,8 +3,12 @@ package ufiles
 import (
 	"bufio"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/congta/ugo-commons/commons-logging/ulogs"
+	"github.com/congta/ugo-commons/commons-u/ucommons"
+	"github.com/duke-git/lancet/v2/fileutil"
 )
 
 func ReadLinesTry0(file *os.File) []string {
@@ -100,4 +104,48 @@ func CloseQuietly(file *os.File) {
 	if err := file.Close(); err != nil {
 		ulogs.Warn("close file error, %v", err)
 	}
+}
+
+func MustListFiles(dir string) []string {
+	files, err := filepath.Glob(filepath.Join(dir, "*"))
+	ucommons.AssertNonErr(err)
+	return files
+}
+
+func MustReadLines(fp string) []string {
+	lines, err := fileutil.ReadFileByLine(fp)
+	ucommons.AssertNonErr(err)
+	return lines
+}
+
+func MustRelative(base, target string) string {
+	rel, err := filepath.Rel(base, target)
+	ucommons.AssertNonErr(err)
+	return rel
+}
+
+func MustRead(fp string) []byte {
+	data, err := os.ReadFile(fp)
+	ucommons.AssertNonErr(err)
+	return data
+}
+
+func MustOverwriteLinesToFile(path string, lines []string) {
+	_ = fileutil.ClearFile(path)
+	_ = fileutil.CreateDir(filepath.Dir(path))
+	err := fileutil.WriteStringToFile(path, strings.Join(lines, "\n"), false)
+	ucommons.AssertNonErr(err)
+}
+
+func MustOverwriteToFile(path string, data []byte) {
+	_ = fileutil.ClearFile(path)
+	_ = fileutil.CreateDir(filepath.Dir(path))
+	err := fileutil.WriteBytesToFile(path, data)
+	ucommons.AssertNonErr(err)
+}
+
+func MustAppendLinesToFile(path string, lines []string) {
+	_ = fileutil.CreateDir(filepath.Dir(path))
+	err := fileutil.WriteStringToFile(path, strings.Join(lines, "\n"), true)
+	ucommons.AssertNonErr(err)
 }
