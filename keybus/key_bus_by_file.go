@@ -33,7 +33,7 @@ func NewKeyBusByFile(sid string) *KeyBusByFile {
 func loadFromFile(sid string, fileName string) *KeyBusByFile {
 	lines, err := ufiles.ReadLines(fileName)
 	if err != nil {
-		ulogs.Panic("key center secret not ready for %s, err: %+v", sid, err)
+		ulogs.Fatal("key center secret not ready for %s, err: %+v", sid, err)
 	}
 
 	holders := make(map[int]KeyHolder)
@@ -61,7 +61,7 @@ func loadFromFile(sid string, fileName string) *KeyBusByFile {
 		holderArr: holderArray,
 	}
 	if len(holderArray) < 1 {
-		ulogs.Panic("no key found for KeyBus %s", fileName)
+		ulogs.Fatal("no key found for KeyBus %s", fileName)
 	}
 	return box
 }

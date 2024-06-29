@@ -1,6 +1,7 @@
 package ulogs
 
 import (
+	"context"
 	"strings"
 
 	"github.com/sirupsen/logrus"
@@ -54,18 +55,42 @@ func InitLogger(logConf LogConf) {
 	logrus.SetOutput(logger)
 }
 
-func Error(format string, args ...interface{}) {
-	logrus.Errorf(format, args)
-}
-
-func Warn(format string, args ...interface{}) {
-	logrus.Warnf(format, args)
+func Debug(format string, args ...interface{}) {
+	logrus.Debugf(format, args)
 }
 
 func Info(format string, args ...interface{}) {
 	logrus.Infof(format, args)
 }
 
-func Debug(format string, args ...interface{}) {
-	logrus.Debugf(format, args)
+func Warn(format string, args ...interface{}) {
+	logrus.Warnf(format, args)
+}
+
+func Error(format string, args ...interface{}) {
+	logrus.Errorf(format, args)
+}
+
+func Fatal(format string, args ...interface{}) {
+	logrus.Fatalf(format, args)
+}
+
+func CtxDebug(ctx context.Context, format string, args ...interface{}) {
+	logrus.Debugf(getLogIDPrefix(ctx)+format, args)
+}
+
+func CtxInfo(ctx context.Context, format string, args ...interface{}) {
+	logrus.Infof(getLogIDPrefix(ctx)+format, args)
+}
+
+func CtxWarn(ctx context.Context, format string, args ...interface{}) {
+	logrus.Warnf(getLogIDPrefix(ctx)+format, args)
+}
+
+func CtxError(ctx context.Context, format string, args ...interface{}) {
+	logrus.Errorf(getLogIDPrefix(ctx)+format, args)
+}
+
+func CtxFatal(ctx context.Context, format string, args ...interface{}) {
+	logrus.Fatalf(getLogIDPrefix(ctx)+format, args)
 }

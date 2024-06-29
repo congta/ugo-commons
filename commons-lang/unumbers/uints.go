@@ -15,7 +15,7 @@ func ParseInt(s string) (int, error) {
 func ParseIntWildly(s string) int {
 	i, err := ParseInt(s)
 	if err != nil {
-		ulogs.Panic("convert non-number string %s to int error. %v", s, err)
+		ulogs.Fatal("convert non-number string %s to int error. %v", s, err)
 	}
 	return i
 }

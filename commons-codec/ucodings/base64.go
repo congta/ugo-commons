@@ -56,7 +56,7 @@ func DecodeBase64String(s string) ([]byte, error) {
 func DecodeBase64StringWildly(s string) []byte {
 	data, err := DecodeBase64String(s)
 	if err != nil {
-		ulogs.Panic("decode base64 string [%s] error, %v", s, err)
+		ulogs.Fatal("decode base64 string [%s] error, %v", s, err)
 	}
 	return data
 }
