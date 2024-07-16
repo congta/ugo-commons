@@ -56,41 +56,41 @@ func InitLogger(logConf LogConf) {
 }
 
 func Debug(format string, args ...interface{}) {
-	logrus.Debugf(format, args)
+	logrus.Debugf(format, args...)
 }
 
 func Info(format string, args ...interface{}) {
-	logrus.Infof(format, args)
+	logrus.Infof(format, args...)
 }
 
 func Warn(format string, args ...interface{}) {
-	logrus.Warnf(format, args)
+	logrus.Warnf(format, args...)
 }
 
 func Error(format string, args ...interface{}) {
-	logrus.Errorf(format, args)
+	logrus.Errorf(format, args...)
 }
 
 func Fatal(format string, args ...interface{}) {
-	logrus.Fatalf(format, args)
+	logrus.Fatalf(format, args...)
 }
 
 func CtxDebug(ctx context.Context, format string, args ...interface{}) {
-	logrus.Debugf(getLogIDPrefix(ctx)+format, args)
+	logrus.Debugf(getLogIDPrefix(ctx)+format, args...)
 }
 
 func CtxInfo(ctx context.Context, format string, args ...interface{}) {
-	logrus.Infof(getLogIDPrefix(ctx)+format, args)
+	logrus.Infof(getLogIDPrefix(ctx)+format, args...)
 }
 
 func CtxWarn(ctx context.Context, format string, args ...interface{}) {
-	logrus.Warnf(getLogIDPrefix(ctx)+format, args)
+	logrus.Warnf(getLogIDPrefix(ctx)+format, args...)
 }
 
 func CtxError(ctx context.Context, format string, args ...interface{}) {
-	logrus.Errorf(getLogIDPrefix(ctx)+format, args)
+	logrus.Errorf(getLogIDPrefix(ctx)+format, args...)
 }
 
 func CtxFatal(ctx context.Context, format string, args ...interface{}) {
-	logrus.Fatalf(getLogIDPrefix(ctx)+format, args)
+	logrus.Fatalf(getLogIDPrefix(ctx)+format, args...)
 }
